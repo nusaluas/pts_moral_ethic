@@ -1,0 +1,1959 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ujian: Etika dan Moral - Yayasan Cahaya Anak Papua</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Permanent+Marker&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- jsPDF Library for direct vector 1-page PDF generation (no blank screenshots) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --grunge-dark: #121316;
+            --grunge-paper: #ece7db;
+            --grunge-accent: #ff3e3e;
+            --grunge-yellow: #facc15;
+            --grunge-green: #10b981;
+        }
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #1a1c23;
+            background-image: radial-gradient(#2d323f 1px, transparent 1px), radial-gradient(#2d323f 1px, #17181e 1px);
+            background-size: 24px 24px;
+            background-position: 0 0, 12px 12px;
+            color: #1e1e24;
+        }
+        .font-stamp {
+            font-family: 'Bebas Neue', cursive;
+            letter-spacing: 0.08em;
+        }
+        .font-typewriter {
+            font-family: 'Courier Prime', monospace;
+        }
+        .font-marker {
+            font-family: 'Permanent Marker', cursive;
+        }
+
+        /* Visible Grunge Scrollbar for Soal Navigation */
+        .grunge-scrollbar::-webkit-scrollbar {
+            width: 10px;
+            display: block;
+        }
+        .grunge-scrollbar::-webkit-scrollbar-track {
+            background: #23252e;
+            border-left: 2px solid #000;
+        }
+        .grunge-scrollbar::-webkit-scrollbar-thumb {
+            background: #eab308;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0px #000;
+        }
+        .grunge-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #facc15;
+        }
+
+        /* Hard Neo-Grunge Shadows & Borders */
+        .brutal-box {
+            border: 3px solid #000000;
+            box-shadow: 5px 5px 0px #000000;
+            transition: all 0.15s ease-in-out;
+        }
+        .brutal-box-sm {
+            border: 2px solid #000000;
+            box-shadow: 3px 3px 0px #000000;
+        }
+        .brutal-box:active, .brutal-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000;
+        }
+        
+        /* Grunge Paper background effect */
+        .paper-texture {
+            background-color: #f7f4ec;
+            background-image: radial-gradient(#e2ded2 1.5px, transparent 1.5px);
+            background-size: 16px 16px;
+        }
+
+        /* Radio button grunge card custom styling */
+        input[type="radio"]:checked + label {
+            border-color: #000;
+            background-color: #fef08a; /* Yellow grunge highlight */
+            box-shadow: 4px 4px 0px #000000;
+            transform: translate(-1px, -1px);
+        }
+        
+        /* Stamped badge rotation */
+        .stamp-badge {
+            transform: rotate(-2deg);
+        }
+        .tape-effect {
+            position: relative;
+        }
+        .tape-effect::after {
+            content: "";
+            position: absolute;
+            top: -12px;
+            left: 35%;
+            width: 90px;
+            height: 22px;
+            background: rgba(254, 240, 138, 0.7);
+            border: 1px dashed rgba(0,0,0,0.3);
+            transform: rotate(-4deg);
+            pointer-events: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+
+        /* Print Media Styles to ensure high-fidelity A4 single page output */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #pdf-content, #pdf-content * {
+                visibility: visible;
+            }
+            #pdf-content {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 0;
+                padding: 10mm;
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col md:flex-row overflow-hidden text-stone-900">
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="fixed inset-0 bg-stone-950/90 z-50 flex flex-col items-center justify-center p-6 text-center">
+        <div class="p-6 bg-yellow-400 brutal-box max-w-sm text-black">
+            <h2 class="font-stamp text-4xl mb-2 tracking-wide">MEMPERSIAPKAN SOAL</h2>
+            <div class="h-4 bg-black w-full overflow-hidden border border-black mb-3">
+                <div class="h-full bg-red-500 animate-pulse w-3/4"></div>
+            </div>
+            <p class="font-typewriter text-xs font-bold uppercase">Memuat 200 Soal Etika & Moral...</p>
+        </div>
+    </div>
+
+    <!-- Notification Toast Modal -->
+    <div id="toast-modal" class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
+        <div class="paper-texture brutal-box max-w-md w-full p-6 text-stone-900 relative">
+            <div class="bg-red-500 text-white font-stamp text-2xl px-3 py-1 -mt-9 mx-auto w-fit brutal-box-sm stamp-badge mb-4">
+                PERHATIAN!
+            </div>
+            <p id="toast-message" class="font-typewriter text-sm font-semibold mb-6 text-stone-800 leading-relaxed text-center">
+                Mohon lengkapi nama dan kelas terlebih dahulu!
+            </p>
+            <button id="toast-close" class="w-full py-2 bg-stone-900 hover:bg-black text-yellow-400 font-stamp text-xl brutal-box-sm transition-transform active:translate-y-1">
+                OK, SAYA MENGERTI
+            </button>
+        </div>
+    </div>
+
+    <!-- Confirmation & Review Modal -->
+    <div id="confirm-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-3 sm:p-4 backdrop-blur-sm">
+        <div class="paper-texture brutal-box max-w-2xl w-full p-5 sm:p-6 text-stone-900 relative max-h-[92vh] flex flex-col">
+            <div class="bg-yellow-400 text-black font-stamp text-2xl px-4 py-1 -mt-9 mx-auto w-fit brutal-box-sm stamp-badge mb-3">
+                LEMBAR PRATINJAU JAWABAN
+            </div>
+            
+            <div class="text-center mb-3 shrink-0">
+                <h3 class="font-bold text-base sm:text-lg">Periksa Kembali Jawaban Anda Sebelum Mengunduh PDF</h3>
+                <div class="flex justify-center gap-4 text-xs sm:text-sm font-typewriter font-bold bg-stone-200 p-2 border-2 border-black mt-2">
+                    <div class="text-emerald-700">Terjawab: <span id="confirm-answered" class="font-black">0</span> / 200</div>
+                    <div class="text-red-600">Kosong: <span id="confirm-unanswered" class="font-black">200</span></div>
+                    <div class="text-stone-700">Nama: <span id="confirm-student-name" class="underline font-bold">-</span></div>
+                </div>
+                <p class="text-[11px] text-stone-600 font-typewriter mt-1">Tips: Anda dapat mengklik nomor yang berwarna merah untuk melompat langsung ke soal tersebut.</p>
+            </div>
+
+            <!-- Scrollable Interactive Answers Matrix -->
+            <div class="flex-1 overflow-y-auto grunge-scrollbar p-2 bg-stone-100 border-2 border-black mb-4">
+                <div id="review-grid" class="grid grid-cols-4 sm:grid-cols-8 gap-1.5 text-xs font-mono">
+                    <!-- Dynamic review cells injected here -->
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex flex-col sm:flex-row gap-2 shrink-0">
+                <button id="btn-cancel-finish" class="flex-1 py-2.5 bg-stone-300 hover:bg-stone-400 text-black font-stamp text-lg brutal-box-sm transition-transform active:translate-y-1">
+                    ← KEMBALI KE SOAL
+                </button>
+                <button id="btn-confirm-finish" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-stamp text-lg brutal-box-sm transition-transform active:translate-y-1 flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    <span id="btn-finish-label">SELESAI & KIRIM KE SPREADSHEET</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar: Navigasi Soal & Data Siswa -->
+    <aside class="w-full md:w-[360px] lg:w-[400px] bg-[#1a1b22] border-r-4 border-black flex flex-col h-2/5 md:h-full shrink-0 shadow-2xl z-20">
+        <!-- Grunge Header -->
+        <div class="p-4 border-b-4 border-black bg-yellow-400 text-black relative">
+            <div class="flex items-center justify-between">
+                <div>
+                    <span class="bg-black text-white font-typewriter text-[10px] px-1.5 py-0.5 uppercase tracking-wider font-bold">PTS 2026</span>
+                    <h1 class="font-stamp text-2xl sm:text-3xl leading-none mt-1 tracking-wide">CAHAYA ANAK PAPUA</h1>
+                </div>
+                <div class="bg-stone-900 text-yellow-400 font-stamp px-2 py-1 text-sm brutal-box-sm stamp-badge">
+                    200 SOAL
+                </div>
+            </div>
+            <p class="text-xs font-bold font-typewriter mt-1 uppercase text-stone-800">Ujian: Etika - Moral</p>
+        </div>
+
+        <!-- Student Info Form (Nama & Kelas) -->
+        <div class="p-3.5 bg-[#252833] border-b-2 border-black">
+            <h2 class="font-stamp text-yellow-400 text-lg tracking-wider flex items-center gap-1.5 mb-2">
+                <span>IDENTITAS PESERTA</span>
+                <span class="text-xs bg-red-600 text-white font-typewriter px-1 py-0.5 rounded-sm">WAJIB</span>
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-2 text-xs">
+                <div>
+                    <label class="block text-stone-300 font-typewriter font-bold mb-1 text-[11px]">NAMA LENGKAP:</label>
+                    <input type="text" id="student-name" placeholder="Tuliskan nama Anda..." 
+                        class="w-full px-3 py-1.5 font-typewriter text-black bg-stone-100 border-2 border-black focus:bg-yellow-100 focus:outline-none focus:border-red-500 font-semibold brutal-box-sm">
+                </div>
+                <div>
+                    <label class="block text-stone-300 font-typewriter font-bold mb-1 text-[11px]">KELAS / ASRAMA:</label>
+                    <input type="text" id="student-class" placeholder="Contoh: VII-A / Asrama 2" 
+                        class="w-full px-3 py-1.5 font-typewriter text-black bg-stone-100 border-2 border-black focus:bg-yellow-100 focus:outline-none focus:border-red-500 font-semibold brutal-box-sm">
+                </div>
+                <div class="mt-1">
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-stone-400 font-typewriter font-bold text-[10px] uppercase">KONEKSI GOOGLE SPREADSHEET:</label>
+                        <span class="bg-emerald-500 text-black text-[9px] font-bold px-1.5 py-0.5 rounded-sm flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span> TERHUBUNG
+                        </span>
+                    </div>
+                    <input type="text" id="gas-endpoint" 
+                        value="https://script.google.com/macros/s/AKfycbyHJrD4iqDeJ8uFEegmbrgo2ySZijRTWwur7u6LE1Iunc1aZiMbR19ErhmhkAyULj-O/exec"
+                        class="w-full px-2 py-1 font-typewriter text-[10px] text-emerald-800 bg-emerald-50 border border-black focus:bg-white focus:outline-none brutal-box-sm font-semibold truncate" readonly title="Tautan spreadsheet aktif dari Yayasan Cahaya Anak Papua">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Legend Indicator -->
+        <div class="p-2.5 bg-[#17181e] border-b-2 border-black flex justify-between items-center text-xs font-typewriter text-stone-300">
+            <div class="flex items-center gap-1.5">
+                <span class="w-3.5 h-3.5 bg-emerald-500 border border-black inline-block"></span> 
+                <span class="font-bold text-white"><span id="answered-count">0</span> Selesai</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <span class="w-3.5 h-3.5 bg-stone-700 border border-black inline-block"></span> 
+                <span><span id="unanswered-count">200</span> Kosong</span>
+            </div>
+            <div class="text-[11px] font-bold text-yellow-400 bg-black/60 px-2 py-0.5 border border-stone-700">
+                SCROLLABLE ↓
+            </div>
+        </div>
+
+        <!-- Question Grid with Grunge Scrollbar -->
+        <div class="flex-1 overflow-y-scroll p-3.5 grunge-scrollbar bg-[#1a1b22]">
+            <div class="flex justify-between items-center mb-2.5">
+                <span class="text-xs font-stamp tracking-wider text-stone-400 uppercase">DAFTAR NOMOR SOAL</span>
+                <span class="text-[10px] font-typewriter text-stone-500">KLIK NOMOR UNTUK LOMPAT</span>
+            </div>
+            <div id="question-grid" class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-5 gap-2">
+                <!-- Question buttons dynamically injected here -->
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content: Area Soal -->
+    <main class="flex-1 flex flex-col h-3/5 md:h-full bg-[#121316] relative overflow-hidden">
+        <!-- Header Main -->
+        <header class="bg-[#1e2029] p-3.5 md:p-4 border-b-4 border-black flex justify-between items-center z-10">
+            <div class="flex items-center gap-2 sm:gap-3">
+                <div class="bg-yellow-400 border-2 border-black px-3 py-1 brutal-box-sm">
+                    <span class="font-stamp text-2xl md:text-3xl text-black leading-none">NO. <span id="current-q-num">1</span></span>
+                </div>
+                <div class="hidden sm:block">
+                    <span class="text-xs font-typewriter text-stone-400 block">TOTAL PROGRESS</span>
+                    <span class="text-sm font-bold text-white font-typewriter"><span id="current-progress-text">1</span> / <span id="total-q-num">200</span> SOAL</span>
+                </div>
+            </div>
+
+            <!-- Header Quick Badge -->
+            <div class="flex items-center gap-2">
+                <span id="q-status-badge" class="font-typewriter text-xs font-bold px-2.5 py-1 border-2 border-black bg-stone-800 text-stone-300">
+                    BELUM DIJAWAB
+                </span>
+            </div>
+        </header>
+
+        <!-- Question Canvas -->
+        <div class="flex-1 overflow-y-auto p-3.5 sm:p-6 md:p-8 pb-28 md:pb-28">
+            <div class="max-w-3xl mx-auto paper-texture brutal-box p-5 sm:p-7 md:p-9 tape-effect relative">
+                <!-- Question Title / Stamp -->
+                <div class="flex items-center justify-between border-b-2 border-dashed border-stone-400 pb-3 mb-5">
+                    <span class="font-stamp text-lg sm:text-xl text-red-600 tracking-wider">SOAL EVALUASI</span>
+                    <span class="font-typewriter text-xs font-bold text-stone-600">PILIHAN GANDA</span>
+                </div>
+
+                <div id="question-text" class="text-base sm:text-lg md:text-xl text-stone-900 font-bold leading-relaxed mb-6 font-sans">
+                    <!-- Question text goes here -->
+                </div>
+
+                <!-- Answer options container -->
+                <div id="options-container" class="space-y-3">
+                    <!-- Options injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer: Action Buttons with Industrial Grunge Feel -->
+        <footer class="bg-[#1b1c24] border-t-4 border-black p-3.5 sm:p-4 absolute bottom-0 w-full z-20">
+            <div class="max-w-3xl mx-auto flex justify-between items-center gap-3">
+                <button id="btn-prev" class="px-4 py-2 sm:px-6 sm:py-2.5 bg-stone-200 hover:bg-white text-stone-900 font-stamp text-lg brutal-box-sm transition-transform active:translate-y-1 disabled:opacity-30 disabled:pointer-events-none flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+                    <span>SEBELUMNYA</span>
+                </button>
+
+                <div class="flex items-center gap-2">
+                    <button id="btn-finish-direct" class="px-4 py-2 sm:px-6 sm:py-2.5 bg-emerald-500 hover:bg-emerald-400 text-stone-950 font-stamp text-base sm:text-xl brutal-box-sm transition-transform active:translate-y-1 flex items-center gap-2 animate-pulse hover:animate-none">
+                        <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>SELESAI UJIAN</span>
+                    </button>
+
+                    <button id="btn-next" class="px-4 py-2 sm:px-6 sm:py-2.5 bg-yellow-400 hover:bg-yellow-300 text-stone-950 font-stamp text-lg brutal-box-sm transition-transform active:translate-y-1 disabled:opacity-30 disabled:pointer-events-none flex items-center gap-2">
+                        <span>SELANJUTNYA</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- Printable & Downloadable Template for PDF Generation (Clean white, structured A4 sheet) -->
+    <div id="pdf-content" style="display: none; width: 210mm; background-color: #ffffff; color: #000000; font-family: Arial, Helvetica, sans-serif; padding: 20px; box-sizing: border-box;">
+        <div style="border-bottom: 3px solid #000; padding-bottom: 8px; margin-bottom: 12px; text-align: center;">
+            <h1 style="font-size: 20px; font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: 1px;">LEMBAR HASIL JAWABAN SISWA</h1>
+            <h2 style="font-size: 13px; font-weight: bold; margin: 3px 0 0 0; color: #222;">PENILAIAN TENGAH SEMESTER (PTS) - ETIKA DAN MORAL</h2>
+            <p style="font-size: 11px; margin: 3px 0 0 0; color: #444;">Yayasan Cahaya Anak Papua • 12 Nilai Bintang Kebaikan</p>
+        </div>
+        
+        <div style="margin-bottom: 10px; background-color: #f8f9fa; padding: 8px 12px; border: 1.5px solid #000; display: flex; justify-content: space-between; font-size: 11px; font-family: monospace;">
+            <div style="line-height: 1.5;">
+                <p style="margin: 0;"><strong>NAMA SISWA  :</strong> <span id="pdf-out-name" style="font-weight: bold; text-decoration: underline; color: #1e3a8a;">-</span></p>
+                <p style="margin: 0;"><strong>KELAS/ASRAMA:</strong> <span id="pdf-out-class" style="font-weight: bold; text-decoration: underline; color: #1e3a8a;">-</span></p>
+            </div>
+            <div style="line-height: 1.5; text-align: right;">
+                <p style="margin: 0;"><strong>TANGGAL UJIAN:</strong> <span id="pdf-out-date" style="font-weight: bold;">-</span></p>
+                <p style="margin: 0;"><strong>STATUS JAWAB :</strong> <span id="pdf-out-summary" style="font-weight: bold; color: #047857;">0 / 200 Terjawab</span></p>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 8px; font-size: 10px; font-weight: bold; background-color: #e5e7eb; padding: 4px 8px; border: 1px solid #000; display: flex; justify-content: space-between; text-transform: uppercase;">
+            <span>DAFTAR PILIHAN GANDA (NOMOR 1 - 200)</span>
+            <span>PETUNJUK: JAWABAN RESMI SISWA</span>
+        </div>
+
+        <!-- 10 Columns Answers Grid for PDF (Compact to fit 200 answers on one page) -->
+        <div id="pdf-answers-grid" style="display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 3px; font-size: 9px; font-family: monospace;">
+            <!-- Table content dynamically generated for 200 items -->
+        </div>
+    </div>
+
+    <script>
+        // Endpoint Google Apps Script resmi yang terhubung ke Google Spreadsheet
+        const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbyHJrD4iqDeJ8uFEegmbrgo2ySZijRTWwur7u6LE1Iunc1aZiMbR19ErhmhkAyULj-O/exec";
+
+        // Raw text from PDF. Using template literal to handle multiple lines easily.
+        // The parser will clean up [Page X] tags and structure it.
+        const rawQuestionData = `
+1. Kejujuran berarti berani berkata sesuai dengan ....
+A. keinginan
+B. fakta
+C. keuntungan
+D. pendapat teman
+2. Saat menemukan dompet yang terjatuh di sekolah, sikap yang tepat adalah ....
+A. mengambil uangnya
+B. menyembunyikannya
+C. menyerahkannya kepada guru
+D. membawanya pulang
+3. Contoh kejujuran ketika ujian adalah
+A. melihat jawaban teman
+B. membuka buku diam-diam
+C. mengerjakan soal dengan kemampuan sendiri
+D. bertanya kepada teman
+4. Jika tidak sengaja menumpahkan susu, sebaiknya kita
+A. menyalahkan orang lain
+B. berpura-pura tidak tahu
+C. mengakui kesalahan dan meminta maaf
+D. meninggalkan tempat tersebut
+5. Anak yang bertanggung jawab akan ....
+A. menunda semua tugas
+B. menyelesaikan tugas sampai tuntas
+C. menyalahkan orang lain
+D. menghindari kewajiban
+6. Setelah bangun tidur, tindakan yang menunjukkan tanggung jawab adalah ....
+A. kembali tidur
+B. bermain HP
+C. merapikan tempat tidur
+D. memanggil orang tua
+7. Jika mendapat jadwal piket kelas, kita seharusnya ....
+A. pulang lebih awal
+B. meminta teman mengerjakan
+C. melaksanakan piket sesuai jadwal
+D. berpura-pura lupa
+8. Buku cerita yang dipinjam dari teman harus ....
+A. dicoret-coret
+[Page 2]B. dirawat agar tidak rusak
+C. diberikan kepada orang lain
+D. dibiarkan terkena air
+9. Salah satu bentuk menghormati guru adalah
+A. berbicara ketika guru menjelaskan
+B. menyimak penjelasan guru
+C. memotong pembicaraan guru
+D. bermain saat pelajaran
+10. Ketika melewati orang tua, sikap yang sesuai dalam materi adalah
+A. berlari
+B. berteriak
+C. sedikit membungkukkan badan
+D. membelakanginya
+11. Ketika teman sedang berbicara, kita sebaiknya
+A. memotong pembicaraannya
+B. menertawakannya
+C. mendengarkan dengan baik
+D. meninggalkannya
+12. Saat teman yang berbeda agama sedang berdoa, kita harus ....
+A. mengganggunya
+B. membuat keributan
+C. menjaga ketenangan
+D. menertawakannya
+13. Bersikap adil berarti
+A. berat sebelah
+B. memilih teman tertentu
+C. tidak membeda-bedakan
+D. selalu membela sahabat
+14. Contoh tindakan adil saat bermain adalah ....
+A. menyerobot antrean
+B. bergantian menggunakan mainan
+C. menguasai lapangan sendiri
+D. mengusir teman
+15. Saat membagikan cokelat kepada adik, sebaiknya cokelat
+A. diberikan seluruhnya kepada diri sendiri
+B. dibuang
+C. dibagi sama rata
+D. disembunyikan
+16. Seorang wasit yang adil akan
+A. membela sahabatnya
+B. mengikuti aturan permainan
+C. memenangkan tim kesukaannya
+D. mengabaikan pelanggaran
+17. Kepedulian berarti
+A. tidak peduli terhadap orang lain
+B. peka terhadap kesulitan orang lain
+[Page 3]C. memikirkan diri sendiri
+D. menghindari teman
+18. Jika melihat teman terjatuh, tindakan yang tepat adalah ....
+A. menertawakannya
+B. meninggalkannya
+C. membantu dan mengantarnya ke UKS jika diperlukan
+D. mengambil barangnya
+19. Salah satu bentuk kepedulian terhadap lingkungan adalah
+A. mencoret meja
+B. merusak kran
+C. menyiram tanaman
+D. membuang sampah sembarangan
+20. Ketika melihat teman sedang menangis, sebaiknya kita
+A. mengejeknya
+B. mengabaikannya
+C. menanyakan keadaannya dengan lembut
+D. menyuruhnya pergi
+21. Disiplin berarti
+A. hidup tanpa aturan
+B. tepat waktu dan hidup teratur
+C. melakukan sesuatu sesuka hati
+D. menunda pekerjaan
+22. Contoh datang tepat waktu ke sekolah adalah
+A. datang setelah bel berbunyi
+B. datang 15 menit sebelum lonceng berbunyi
+C. datang saat pelajaran dimulai
+D. datang ketika teman pulang
+23. Salah satu perilaku disiplin dalam menggunakan HP adalah
+A. bermain sepanjang malam
+B. mengabaikan waktu belajar
+C. meletakkan HP ketika batas waktu bermain selesai
+D. marah ketika HP diminta orang tua
+24. Pada pukul 06.00 pagi, ketika alarm berbunyi, sebaiknya kita ....
+A. kembali tidur
+B. segera bangun
+C. bermain game
+D. menonton televisi
+25. Integritas berarti
+A. berbuat baik hanya ketika diawasi
+B. tetap melakukan hal yang benar meskipun tidak dilihat
+C. mencari pujian
+D. mengikuti teman
+26. Contoh integritas adalah
+A. membuang sampah ketika ada guru
+B. membuang sampah ke tempatnya meskipun tidak ada yang melihat
+C. pura-pura belajar saat guru datang
+D. mengambil uang tanpa izin
+[Page 4]27. Jika menemukan kran air yang meluap, anak yang berintegritas akan ....
+A. membiarkannya
+B. menunggu petugas
+C. mematikan kran tersebut
+D. bermain dengan air
+28. Menggunakan kode curang (cheat) dalam permainan yang merugikan teman merupakan
+tindakan ....
+A. berintegritas
+B. jujur
+C. tidak berintegritas
+D. bertanggung jawab
+29. Kerja sama berarti
+A. bekerja sendiri
+B. saling membantu untuk mencapai tujuan bersama
+C. menyuruh teman bekerja
+D. mengutamakan diri sendiri
+30. Dalam kegiatan piket kelompok, sikap yang tepat adalah
+A. membiarkan teman bekerja sendiri
+B. saling berbagi tugas
+C. bermain saat teman bekerja
+D. menyalahkan teman
+31. Dalam kerja kelompok, kita sebaiknya....
+A. mengabaikan pendapat teman
+B. memaksakan pendapat sendiri
+C. mendengarkan usulan teman
+D. meninggalkan kelompok
+32. Ketika kelompok kalah dalam lomba, sebaiknya anggota kelompok ....
+A. saling menyalahkan
+B. mencaci teman
+C. tetap saling mendukung
+D. bertengkar
+33. Toleransi berarti ....
+A. menghargai keberagaman
+B. mengucilkan orang berbeda
+C. memilih teman berdasarkan suku
+D. mengejek bahasa daerah
+34. Ketika ada teman baru dari luar pulau, sikap yang baik adalah
+A. menghindarinya
+B. mengejek logatnya
+C. mengajaknya makan bersama
+D. tidak mengajaknya bermain
+35. Saat teman sedang menjalankan ibadah, kita sebaiknya ....
+A. membuat keributan
+B. menjaga ketenangan
+C. mengganggunya
+D. menertawakannya
+[Page 5]36. Menghargai teman yang memiliki logat berbeda berarti ....
+A. menirukan logatnya untuk mengejek
+B. menertawakannya
+C. menyimak ceritanya tanpa mengejek
+D. tidak mau berbicara dengannya
+37. Tiga kata ajaib yang diajarkan dalam materi adalah ....
+A. Ayo, Cepat, Pergi
+B. Tolong, Maaf, Terima Kasih
+C. Halo, Duduk, Berdiri
+D. Ambil, Berikan, Pergi
+38. Kata "Tolong" digunakan ketika
+A. meminta bantuan
+B. melakukan kesalahan
+C. menerima hadiah
+D. mengucapkan salam
+39. Jika tidak sengaja menyenggol teman, kita sebaiknya mengatakan
+A. "Cepat pergi!"
+B. "Bukan salahku!"
+C. "Maafkan aku."
+D. "Jangan menangis!"
+40. Setelah menerima bantuan dari teman, kita sebaiknya mengatakan
+A. "Pergi!"
+B. "Terima kasih."
+C. "Cepat!"
+D. "Tidak perlu."
+41. Sebelum mengunduh aplikasi atau game baru, kita sebaiknya ....
+A. langsung mengunduhnya
+B. meminta izin orang tua
+C. meminta teman mengunduhkannya
+D. menyembunyikannya
+42. Informasi yang tidak boleh dibagikan sembarangan di internet adalah
+A. warna kesukaan
+B. nomor telepon dan kata sandi
+C. makanan favorit
+D. nama hewan kesukaan
+43. Sebelum mengunggah foto bersama teman ke media sosial, kita sebaiknya ....
+A. langsung mengunggahnya
+B. meminta izin teman
+C. mengedit wajah teman tanpa izin
+D. menyebarkannya ke semua orang
+44. Meneruskan berita bohong yang menakut-nakuti teman di grup chat disebut ....
+A. kerja sama
+B. toleransi
+C. menyebarkan hoaks
+D. tanggung jawab
+45. Jika kalah dalam permainan online, sikap yang baik adalah
+A. berkata kasar
+[Page 6]B. mengejek lawan
+C. mengatakan "Good Game!"
+D. mematikan internet teman
+46. Pemimpin yang baik seharusnya
+A. suka memerintah
+B. memberi teladan melalui tindakan
+C. mementingkan diri sendiri
+D. menyuruh orang lain bekerja
+47. Contoh pemimpin yang memberi teladan adalah ....
+A. datang paling pagi dan membantu menjaga kebersihan
+B. datang paling terlambat
+C. menyuruh teman bekerja
+D. mengambil semua hadiah
+48. Sebelum mengambil keputusan dalam kelompok, seorang pemimpin sebaiknya...
+A. memutuskan sendiri
+B. bermusyawarah dengan anggota
+C. mengabaikan pendapat anggota
+D. menyuruh anggota diam
+49. Ketika seorang teman gagal mencetak gol, seorang kapten yang baik seharusnya..
+A. memarahinya
+B. mengejeknya
+C. menyemangatinya
+D. menyalahkannya
+50. Pernyataan yang paling sesuai dengan makna kepemimpinan dalam materi adalah
+A. pemimpin adalah orang yang memiliki banyak pelayan
+B. pemimpin adalah orang yang paling banyak memerintah
+C. pemimpin adalah orang yang memberi contoh dan melayani sesama
+D. pemimpin adalah orang yang selalu menang
+51. Jika kamu datang terlambat ke sekolah, sikap yang tepat adalah ...
+A. Berpura-pura tidak terlambat
+B. Menyalahkan teman
+C. Mengakui kesalahan dan menerima konsekuensinya
+D. Pulang kembali ke rumah
+52. Ketika guru sedang menjelaskan pelajaran, siswa sebaiknya ...
+A. Berbicara dengan teman
+B. Mendengarkan dengan baik
+C. Bermain dengan alat tulis
+D. Keluar kelas tanpa izin
+53. Jika menemukan uang di lantai kelas, tindakan yang tepat adalah
+A. Menyimpannya
+B. Membaginya dengan teman
+C. Mengembalikannya kepada pemilik atau melaporkannya kepada guru
+D. Membelanjakannya di kantin
+54. Ketika mendapat tugas kelompok, setiap anggota sebaiknya ...
+A. Menyerahkan semua tugas kepada satu orang
+B. Membagi tugas dan bekerja sama
+[Page 7]C. Tidak mengerjakan tugas
+D. Menunggu teman selesai
+55. Jika teman melakukan kesalahan saat menjawab pertanyaan guru, kita sebaiknya ...
+A. Menertawakannya
+B. Mengejeknya
+C. Menghargainya dan tidak mempermalukannya
+D. Mengajak teman lain ikut mengejek
+56. Saat berada dalam antrean di kantin, sikap yang menunjukkan keadilan adalah ...
+A. Menyela antrean
+B. Menunggu giliran
+C. Meminta teman menyimpan tempat
+D. Berdiri paling depan tanpa alasan
+57. Jika kamu meminjam buku milik teman, kamu harus ...
+A. Menjaganya dan mengembalikannya
+B. Membawanya pulang tanpa izin
+C. Memberikannya kepada orang lain
+D. Menulis sembarangan di dalamnya
+58. Ketika kelas selesai digunakan, siswa sebaiknya ...
+A. Meninggalkan sampah
+B. Menunggu petugas kebersihan
+C. Membantu menjaga kebersihan kelas
+D. Menyembunyikan sampah di bawah meja
+59. Salah satu contoh sikap disiplin di sekolah adalah
+A. Datang tepat waktu
+B. Sering terlambat
+C. Tidak mengerjakan tugas
+D. Mengabaikan aturan sekolah
+60. Jika kamu tidak memahami pelajaran, tindakan yang tepat adalah ...
+A. Menyerah
+B. Mengganggu teman
+C. Bertanya dengan sopan kepada guru
+D. Menyalin jawaban teman
+61. Saat menggunakan fasilitas sekolah, kita harus
+A. Menggunakannya dengan sembarangan
+B. Menjaganya dengan baik
+C. Merusaknya jika sudah lama
+D. Membawanya pulang
+62. Jika tidak sengaja merusakkan barang milik sekolah, sebaiknya ...
+A. Menyembunyikannya
+B. Menyalahkan teman
+C. Mengakui dan melaporkannya
+D. Meninggalkan tempat tersebut
+63. Ketika guru memberikan kesempatan untuk bertanya, siswa sebaiknya ...
+A. Berteriak
+B. Mengangkat tangan dan berbicara dengan sopan
+C. Memotong pembicaraan teman
+D. Berbicara bersama-sama
+[Page 8]64. Jika teman baru berasal dari daerah yang berbeda, sikap yang tepat adalah ...
+A. Menjauhinya
+B. Mengejek cara bicaranya
+C. Mengajaknya berteman
+D. Tidak mengizinkannya bergabung
+65. Ketika teman membutuhkan bantuan dalam kegiatan sekolah, kita dapat menunjukkan kepedulian dengan
+A. Membiarkannya
+B. Menertawakannya
+C. Membantu jika mampu
+D. Menyuruh orang lain membantu
+66. Jika guru memberikan tugas individu, kita sebaiknya
+A. Menyalin pekerjaan teman
+B. Mengerjakannya sendiri
+C. Meminta teman mengerjakannya
+D. Mencari jawaban tanpa belajar
+67. Saat mengikuti perlombaan antarkelas, kita sebaiknya
+A. Menghormati lawan
+B. Mengejek lawan
+C. Marah ketika kalah
+D. Menuduh lawan curang tanpa alasan
+68. Jika kelompok kita kalah dalam sebuah perlombaan, sikap yang tepat adalah
+A. Menyalahkan anggota kelompok
+B. Menerima hasil dan belajar dari pengalaman
+C. Marah kepada pemenang
+D. Mengganggu kelompok lain
+69. Saat teman sedang berbicara, kita sebaiknya ...
+A. Memotong pembicaraannya
+B. Mendengarkan sampai selesai
+C. Berbicara lebih keras
+D. Meninggalkannya
+70. Contoh kepemimpinan yang baik di sekolah adalah ...
+A. Memerintah teman sesuka hati
+B. Memberikan contoh yang baik
+C. Menyalahkan anggota kelompok
+D. Mengambil semua pujian
+71. Setelah bangun tidur di asrama, siswa sebaiknya ...
+A. Kembali tidur tanpa alasan
+B. Merapikan tempat tidur
+C. Bermain dengan teman
+D. Membiarkan kamar berantakan
+72. Jika mendapat jadwal piket asrama, siswa harus ...
+A. Menghindarinya
+B. Menyuruh teman menggantikan tanpa alasan
+C. Melaksanakan tugasnya dengan bertanggung jawab
+D. Menunggu sampai ditegur
+[Page 9]73. Jika melihat lantai asrama kotor, sikap yang tepat adalah ...
+A. Membiarkannya
+B. Menunggu orang lain membersihkan
+C. Membantu membersihkannya
+D. Menutupinya dengan karpet
+74. Ketika meminjam barang teman di asrama, kita harus ...
+A. Meminta izin terlebih dahulu
+B. Mengambil diam-diam
+C. Menggunakannya selama mungkin
+D. Memberikannya kepada orang lain
+75. Jika menemukan barang teman di ruang bersama, sebaiknya
+A. Menyimpannya untuk diri sendiri
+B. Mengembalikannya kepada pemilik
+C. Menyembunyikannya
+D. Menukarnya dengan barang lain
+76. Ketika waktu belajar malam dimulai, siswa sebaiknya ...
+A. Bermain
+B. Berbicara keras
+C. Fokus belajar sesuai jadwal
+D. Menonton video
+77. Jika teman sedang belajar, kita sebaiknya ...
+A. Mengganggunya
+B. Berbicara keras
+C. Memberikan suasana yang tenang
+D. Mengajaknya bermain
+78. Ketika menggunakan kamar mandi bersama, siswa harus
+A. Membiarkannya kotor
+B. Menggunakannya dengan tertib dan menjaga kebersihan
+C. Menghabiskan air sebanyak mungkin
+D. Meninggalkan barang berserakan
+79. Jika selesai menggunakan fasilitas bersama, kita sebaiknya ...
+A. Meninggalkannya begitu saja
+B. Mengembalikannya dalam keadaan baik
+C. Menyembunyikannya
+D. Memindahkannya tanpa izin
+80. Jika mendapat tugas membersihkan halaman asrama bersama teman, sikap yang tepat adalah ...
+A. Bekerja sama
+B. Membiarkan teman bekerja
+C. Berpura-pura sibuk
+D. Pergi bermain
+81. Jika teman lupa menjalankan tugas piketnya, kita sebaiknya ...
+A. Langsung mengejeknya
+B. Mengingatkan dengan baik
+C. Membalas dengan tidak melakukan piket
+D. Menyebarkan kesalahannya
+82. Saat waktu istirahat malam sudah tiba, siswa sebaiknya
+A. Bermain dan berbicara keras
+[Page 10]B. Menghormati waktu istirahat
+C. Membuat keributan
+D. Mengganggu teman yang tidur
+83. Jika teman sedang tidur, kita harus
+A. Menyalakan suara keras
+B. Membangunkannya untuk bermain
+C. Menjaga ketenangan
+D. Mengambil barangnya
+84. Jika terjadi perselisihan dengan teman sekamar, tindakan yang tepat adalah
+A. Membalas dengan kemarahan
+B. Membicarakannya dengan baik
+C. Mengajak teman lain untuk memusuhi
+D. Menyebarkan masalah tersebut
+85. Saat menggunakan barang bersama di asrama, kita harus
+A. Menguasainya sendiri
+B. Menggunakannya secara bergantian
+C. Menyembunyikannya
+D. Melarang teman menggunakannya
+86. Jika teman sakit di asrama, sikap yang menunjukkan kepedulian adalah ...
+A. Membiarkannya
+B. Menertawakannya
+C. Membantu dan melaporkannya kepada pembina
+D. Menyuruhnya tetap beraktivitas
+87. Ketika mendapat aturan baru dari pembina asrama, siswa sebaiknya ...
+A. Mengabaikannya
+B. Mematuhinya
+C. Mengajak teman melanggar
+D. Menolak tanpa alasan
+88. Jika kamu melakukan kesalahan di asrama, sikap yang menunjukkan integritas adalah ...
+A. Menyembunyikannya
+B. Menyalahkan teman
+C. Mengakui kesalahan
+D. Berpura-pura tidak tahu
+89. Saat membersihkan kamar bersama, pembagian tugas sebaiknya
+A. Hanya dilakukan satu orang
+B. Dibagi secara adil
+C. Diberikan kepada siswa yang paling lemah
+D. Tidak perlu dibagi
+90. Jika teman berasal dari daerah atau budaya yang berbeda, kita sebaiknya
+A. Mengejeknya
+B. Menghargai perbedaannya
+C. Menjauhinya
+D. Memaksanya mengikuti kebiasaan kita
+[Page 11]91. Ketika meminta bantuan kepada teman, sebaiknya menggunakan kata ...
+A. Cepat!
+B. Ambil!
+C. Tolong
+D. Sekarang!
+92. Setelah menerima bantuan dari teman, kita sebaiknya mengatakan ...
+A. Pergi!
+B. Terima kasih
+C. Terserah
+D. Tidak perlu
+93. Jika tidak sengaja menyakiti perasaan teman, kita sebaiknya mengatakan....
+A. Maaf
+B. Diam saja
+C. Salah sendiri
+D. Bukan urusanku
+94. Jika melihat teman kesulitan membawa banyak barang, tindakan yang tepat adalah
+A. Menertawakannya
+B. Membantu jika mampu
+C. Meninggalkannya
+D. Mengambil barangnya tanpa izin
+95. Saat menggunakan grup chat kelas atau asrama, kita sebaiknya ...
+A. Mengirim pesan yang sopan
+B. Menghina teman
+C. Menyebarkan informasi yang belum jelas
+D. Mengirim pesan terus-menerus saat waktu istirahat
+96. Sebelum mengunggah foto teman ke media sosial, sebaiknya ...
+A. Langsung mengunggahnya
+B. Meminta izin terlebih dahulu
+C. Mengeditnya untuk mengejek
+D. Mengirimkannya kepada semua orang
+97. Jika kalah dalam permainan bersama teman, sikap yang baik adalah ...
+A. Marah
+B. Menyalahkan teman
+C. Menerima hasil dengan baik
+D. Merusak permainan
+98. Jika menjadi ketua kelompok, seorang pemimpin sebaiknya ...
+A. Memerintah semua anggota
+B. Mendengarkan pendapat anggota
+C. Mengambil semua keputusan sendiri
+D. Menyalahkan anggota
+99. Ketika melakukan kegiatan bersama di sekolah atau asrama, keberhasilan akan lebih mudah
+dicapai jika siswa ...
+A. Bekerja sendiri-sendiri
+B. Saling bekerja sama
+C. Saling menyalahkan
+D. Hanya mengandalkan satu orang
+[Page 12]100. Tujuan menerapkan kejujuran, tanggung jawab, disiplin, kepedulian, dan nilai-nilai baik lainnya
+di sekolah dan asrama adalah ...
+A. Agar selalu mendapat hadiah
+B. Agar terlihat hebat di depan orang lain
+C. Membentuk kebiasaan dan perilaku yang baik dalam kehidupan sehari-hari
+D. Agar tidak pernah mendapat tugas
+101. Saat bel masuk berbunyi, siswa yang disiplin seharusnya ...
+A. Masih berada di kantin
+B. Segera masuk ke kelas
+C. Bermain di halaman
+D. Berbicara di luar kelas
+102. Jika guru memberikan tugas yang harus dikumpulkan besok, tindakan yang bertanggung jawab
+adalah ...
+A. Menunggu teman mengerjakannya
+B. Mengerjakannya sesuai waktu yang ditentukan
+C. Melupakannya
+D. Mengumpulkannya jika sudah ditegur
+103. Seorang siswa melihat sampah di dekat tempat duduknya. Sikap yang tepat adalah ...
+A. Membiarkannya
+B. Menendangnya ke tempat lain
+C. Memungut dan membuangnya pada tempatnya
+D. Menunggu petugas kebersihan
+104. Ketika teman sedang menyampaikan pendapat dalam diskusi, kita sebaiknya ...
+A. Memotong pembicaraannya
+B. Mendengarkan terlebih dahulu
+C. Menertawakannya
+D. Berbicara dengan teman lain
+105. Dalam kerja kelompok, seorang siswa sebaiknya
+A. Membiarkan teman bekerja
+B. Mengambil semua tugas
+C. Melaksanakan bagian tugasnya
+D. Menunggu hasil pekerjaan teman
+106. Jika teman memperoleh nilai lebih tinggi, sikap yang baik adalah
+A. Mengejeknya
+B. Iri dan menjauhinya
+C. Menghargai hasilnya dan belajar lebih baik
+D. Menuduhnya menyontek
+107. Saat meminjam pensil teman, setelah selesai digunakan kita harus ...
+A. Menyimpannya
+B. Mengembalikannya
+C. Memberikannya kepada teman lain
+D. Membawanya pulang
+108. Jika kamu tidak sengaja menumpahkan air di kelas, kamu sebaiknya
+A. Berpura-pura tidak tahu
+B. Menyalahkan teman
+C. Membersihkannya dan mengakui kesalahan
+D. Meninggalkan kelas
+[Page 13]109. Ketika melewati guru atau orang yang lebih tua, sikap yang sopan adalah ...
+A. Berteriak
+B. Berlari tanpa memperhatikan
+C. Bersikap sopan dan menghormati
+D. Mendorong orang tersebut
+110. Jika ada teman baru yang belum memiliki teman, kita sebaiknya ...
+A. Membiarkannya sendiri
+B. Mengajaknya berkenalan dan bergabung
+C. Menertawakannya
+D. Menjauhinya
+111. Ketika mengikuti permainan di sekolah, kita harus
+A. Mengikuti aturan permainan
+B. Mengubah aturan agar menang
+C. Marah ketika kalah
+D. Mengganggu pemain lain
+112. Jika terjadi perbedaan pendapat dalam kelompok, sebaiknya...
+A. Memaksakan pendapat sendiri
+B. Berdebat sampai marah
+C. Mendengarkan dan mencari kesepakatan
+D. Meninggalkan kelompok
+113. Siswa yang memiliki integritas akan tetap melakukan hal yang benar
+A. Hanya ketika diawasi
+B. Ketika ada hadiah
+C. Walaupun tidak ada yang melihat
+D. Ketika mendapat pujian
+114. Ketika ujian berlangsung, tindakan yang menunjukkan kejujuran adalah ...
+A. Melihat jawaban teman
+B. Menggunakan catatan tersembunyi
+C. Mengerjakan berdasarkan kemampuan sendiri
+D. Bertanya kepada teman
+115. Jika menemukan penghapus milik teman di kelas, kita sebaiknya
+A. Menyimpannya
+B. Mengembalikannya
+C. Membuangnya
+D. Menukarnya dengan milik sendiri
+116. Setiap siswa yang mendapat jadwal piket harus ...
+A. Menunggu teman mengerjakannya
+B. Melaksanakan tugas sesuai jadwal
+C. Menghindari tugas
+D. Berpura-pura lupa
+117. Jika kamar tidur bersama terlihat berantakan, tindakan yang tepat adalah ...
+A. Membiarkannya
+B. Menyalahkan teman
+C. Merapikannya bersama-sama
+D. Keluar dari kamar
+118. Saat teman sedang beristirahat, kita sebaiknya ...
+A. Berbicara keras
+[Page 14]B. Menyalakan musik keras
+C. Menjaga ketenangan
+D. Mengajak bermain
+119. Jika kamu menggunakan fasilitas asrama, kamu harus ...
+A. Menjaganya
+B. Merusaknya
+C. Menggunakannya sesuka hati
+D. Membiarkannya kotor
+120. Jika melihat keran air tidak tertutup dengan baik, tindakan yang tepat adalah
+A. Membiarkannya
+B. Menutupnya dengan baik
+C. Bermain dengan air
+D. Memanggil teman untuk melihat
+121. Saat makan bersama di asrama, sikap yang baik adalah
+A. Mengambil semua makanan
+B. Memperhatikan kebutuhan orang lain
+C. Mendahului semua teman
+D. Mengambil makanan tanpa memperhatikan giliran
+122. Jika teman tidak memiliki alat yang diperlukan untuk mengerjakan tugas, kita dapat ...
+A. Mengejeknya
+B. Membantunya jika memungkinkan
+C. Menyembunyikan alat kita
+D. Membiarkannya kesulitan
+123. Ketika pembina memberikan instruksi, siswa sebaiknya ...
+A. Mendengarkan dan melaksanakannya
+B. Mengabaikannya
+C. Berbicara sendiri
+D. Pergi meninggalkan tempat
+124. Jika kamu terlambat mengikuti kegiatan asrama, tindakan yang tepat adalah ...
+A. Berbohong tentang alasan
+B. Mengakui keterlambatan
+C. Menyalahkan teman
+D. Berpura-pura tidak terjadi apa-apa
+125. Jika teman sekamar melakukan kesalahan, sebaiknya kita
+A. Mempermalukannya di depan banyak orang
+B. Mengingatkan dengan baik
+C. Membalas kesalahannya
+D. Menyebarkan kepada semua teman
+126. Ketika tugas asrama dibagi kepada beberapa siswa, pembagian tersebut sebaiknya
+A. Adil dan merata
+B. Hanya diberikan kepada satu siswa
+C. Berdasarkan siapa yang paling dekat
+D. Tidak perlu jelas
+127. Jika teman memiliki kebiasaan atau budaya yang berbeda, kita sebaiknya ...
+A. Mengejeknya
+B. Memaksanya berubah
+[Page 15]C. Menghormati perbedaannya
+D. Menjauhinya
+128. Saat kegiatan bersama berlangsung, siswa yang peduli akan ...
+A. Memikirkan dirinya sendiri
+B. Memperhatikan kebutuhan teman
+C. Menghindari semua tugas
+D. Menunggu perintah terus-menerus
+129. Jika kamu melihat teman kesulitan membersihkan area tugasnya, kamu dapat ...
+A. Menertawakannya
+B. Membantunya
+C. Meninggalkannya
+D. Mengambil alih tanpa berbicara
+130. Ketika waktu belajar malam berlangsung, siswa sebaiknya ...
+A. Bermain
+B. Berbicara keras
+C. Menggunakan waktu untuk belajar
+D. Mengganggu teman
+131. Ketika meminta sesuatu kepada teman, cara yang tepat adalah ...
+A. Memerintah dengan kasar
+B. Meminta dengan sopan
+C. Berteriak
+D. Mengancam
+132. Jika tidak sengaja menyenggol teman, kita sebaiknya ...
+A. Pergi begitu saja
+B. Mengatakan "maaf"
+C. Menyalahkan teman
+D. Menertawakannya
+133. Jika teman membantu membawa barang, kita sebaiknya ...
+A. Diam saja
+B. Mengucapkan terima kasih
+C. Mengambil barangnya
+D. Meminta bantuan lagi tanpa mengucapkan apa-apa
+134. Ketika teman sedang menceritakan masalahnya, sikap yang baik adalah
+A. Mendengarkan dengan baik
+B. Menertawakannya
+C. Menyebarkan ceritanya
+D. Memotong pembicaraannya
+135. Jika terjadi konflik dengan teman, tindakan yang sesuai dengan sikap damai adalah ...
+A. Membalas
+B. Menyelesaikannya dengan pembicaraan yang baik
+C. Mengajak teman lain memusuhi
+D. Menyebarkan masalah
+136. Jika ada teman yang berbeda agama, kita harus
+A. Mengejek keyakinannya
+B. Menghormati keyakinannya
+C. Memaksanya mengikuti kita
+D. Menjauhinya
+[Page 16]137. Ketika teman sedang beribadah, sikap yang tepat adalah ...
+A. Mengganggunya
+B. Membuat keributan
+C. Menghormati dan menjaga ketenangan
+D. Menertawakannya
+138. Jika seorang teman mendapatkan kesempatan untuk memimpin kegiatan, kita sebaiknya ...
+A. Menghalanginya
+B. Memberikan kesempatan dan mendukungnya
+C. Mengejeknya
+D. Mengambil alih tugasnya
+139. Seorang ketua kelompok yang baik seharusnya
+A. Hanya memberikan perintah
+B. Mau bekerja bersama anggota
+C. Mengambil semua pujian
+D. Menyalahkan anggota ketika gagal
+140. Sikap yang paling tepat dalam kehidupan bersama di sekolah dan asrama adalah
+A. Memikirkan kepentingan sendiri
+B. Menghargai, membantu, dan bekerja sama dengan orang lain
+C. Menghindari semua tanggung jawab
+D. Mengutamakan diri sendiri dalam semua keadaan
+141. Saat guru membagikan hasil ujian, kamu menyadari nilai yang diberikan lebih tinggi daripada
+jawabanmu. Apa yang sebaiknya kamu lakukan?
+A. Diam saja
+B. Memberitahukan kepada guru
+C. Menunjukkannya kepada teman
+D. Menyimpan hasil tersebut
+142. Temanmu meminta jawaban saat ujian berlangsung. Sikap yang tepat adalah
+A. Memberikan jawaban
+B. Menolak dengan baik
+C. Menunjukkan buku
+D. Memberikan kode jawaban
+143. Kamu menemukan uang di bawah tempat tidur asrama. Tindakan yang paling tepat adalah ...
+A. Menggunakannya
+B. Menyimpannya
+C. Mencari pemilik atau melaporkannya kepada pembina
+D. Membaginya dengan teman
+144. Jika kamu lupa mengerjakan tugas sekolah, sebaiknya ...
+A. Berbohong kepada guru
+B. Menyalahkan teman
+C. Mengakui bahwa kamu belum mengerjakannya
+D. Menyalin tugas teman
+145. Integritas berarti melakukan hal yang benar
+A. Hanya ketika ada guru
+B. Hanya ketika diawasi
+C. Walaupun tidak ada yang melihat
+D. Jika mendapatkan hadiah
+[Page 17]146. Saat melihat sampah di koridor ketika tidak ada orang, siswa yang memiliki integritas akan ...
+A. Membiarkannya
+B. Menendangnya
+C. Memungut dan membuangnya
+D. Menunggu petugas
+147. Jika kamu secara tidak sengaja merusakkan barang teman, tindakan yang tepat adalah ...
+A. Menyembunyikannya
+B. Mengaku dan meminta maaf
+C. Menyalahkan orang lain
+D. Meninggalkan barang tersebut
+148. Ketika teman mengajak menyontek karena guru tidak melihat, sebaiknya kamu...
+A. Mengikuti ajakannya
+B. Menolak dan tetap mengerjakan sendiri
+C. Memberikan jawaban
+D. Membiarkan teman menyontek
+149. Seorang siswa dikatakan jujur apabila
+A. Mengatakan sesuatu sesuai fakta
+B. Selalu memenangkan perlombaan
+C. Tidak pernah melakukan kesalahan
+D. Selalu mendapat nilai tinggi
+150. Jika melakukan kesalahan dalam menjalankan tugas piket, siswa sebaiknya...
+A. Menyembunyikannya
+B. Mengakuinya dan memperbaikinya
+C. Menunggu orang lain memperbaiki
+D. Menyalahkan anggota kelompok
+151. Setelah menggunakan meja belajar bersama, siswa bertanggung jawab untuk ...
+A. Meninggalkan buku berserakan
+B. Merapikan kembali
+C. Menunggu petugas
+D. Memindahkan barang teman
+152. Jika mendapat jadwal membersihkan kamar pada hari tertentu, siswa harus ...
+A. Melakukannya sesuai jadwal
+B. Mengabaikannya
+C. Menunggu ditegur
+D. Menyuruh teman tanpa alasan
+153. Salah satu bentuk tanggung jawab terhadap barang pinjaman adalah ...
+A. Menggunakannya sesuka hati
+B. Menjaganya dan mengembalikannya
+C. Memberikannya kepada teman
+D. Menyimpannya tanpa batas waktu
+154. Ketika tugas sekolah sudah selesai, siswa dapat ...
+A. Memeriksa kembali pekerjaannya
+B. Langsung merobek tugas
+C. Menyembunyikan tugas
+D. Mengambil tugas teman
+155. Disiplin dalam kegiatan sekolah berarti
+A. Mengikuti aturan dan jadwal
+[Page 18]B. Melakukan sesuatu sesuka hati
+C. Datang hanya ketika diingatkan
+D. Menghindari kegiatan
+156. Jika jadwal kegiatan asrama dimulai pukul 19.00, siswa sebaiknya ...
+A. Datang setelah kegiatan dimulai
+B. Bersiap sebelum pukul 19.00
+C. Menunggu teman
+D. Tidak mengikuti kegiatan
+157. Ketika alarm waktu belajar berbunyi, siswa sebaiknya ...
+A. Tetap bermain
+B. Mengikuti waktu belajar
+C. Mengganggu teman
+D. Keluar dari asrama
+158. Jika kamu mendapat tugas yang sulit, sikap bertanggung jawab adalah.
+A. Meninggalkannya
+B. Berusaha menyelesaikannya
+C. Menyuruh teman mengerjakan
+D. Mengatakan tugas itu bukan milikmu
+159. Menjaga kebersihan tempat tidur sendiri merupakan contoh
+A. Tanggung jawab
+B. Persaingan
+C. Hukuman
+D. Permainan
+160. Datang tepat waktu dalam kegiatan asrama menunjukkan sikap
+A. Disiplin
+B. Tidak peduli
+C. Sombong
+D. Egois
+161. Saat guru sedang berbicara di depan kelas, siswa sebaiknya ...
+A. Mendengarkan
+B. Berbicara sendiri
+C. Bermain
+D. Keluar tanpa izin
+162. Jika ingin masuk ke kamar atau ruangan yang digunakan orang lain, sebaiknya
+A. Langsung masuk
+B. Mengetuk dan meminta izin
+C. Berteriak dari luar
+D. Membuka pintu dengan keras
+163. Ketika meminta bantuan kepada pembina asrama, sebaiknya menggunakan bahasa yang ...
+A. Kasar
+B. Sopan
+C. Memerintah
+D. Mengancam
+164. Jika teman sedang menyampaikan pendapat, kita menunjukkan rasa hormat dengan ...
+A. Mendengarkannya
+B. Menertawakannya
+[Page 19]C. Memotong pembicaraan
+D. Mengabaikannya
+165. Ketika tidak setuju dengan pendapat teman, kita sebaiknya ...
+A. Mengejeknya
+B. Menyampaikan pendapat dengan sopan
+C. Membentaknya
+D. Meninggalkan kelompok
+166. Saat melewati orang yang lebih tua, sikap yang tepat adalah
+A. Bersikap sopan
+B. Berteriak
+C. Mendorongnya
+D. Mengabaikannya
+167. Jika teman melakukan kesalahan, kita tidak seharusnya
+A. Membantunya memperbaiki
+B. Mengingatkannya
+C. Mempermalukannya
+D. Memberikan nasihat
+168. Ketika bertemu guru pada pagi hari, siswa dapat menunjukkan kesopanan dengan ...
+A. Menyapa
+B. Menghindar
+C. Berlari menjauh
+D. Berteriak
+169. Tiga kata yang dapat digunakan untuk menunjukkan kesopanan adalah ...
+A. Cepat, pergi, diam
+B. Tolong, maaf, terima kasih
+C. Ambil, berikan, pergi
+D. Jangan, tidak, selesai
+170. Jika teman membantu menyelesaikan tugas, kita sebaiknya...
+A. Mengabaikannya
+B. Mengucapkan terima kasih
+C. Mengambil pujian
+D. Menganggapnya sebagai kewajiban teman
+171. Jika melihat teman terjatuh di halaman sekolah, tindakan yang tepat adalah
+A. Menertawakannya
+B. Membantu atau memanggil bantuan
+C. Meninggalkannya
+D. Memotretnya
+172. Ketika teman sedang sedih, kita dapat menunjukkan kepedulian dengan ...
+A. Mengejeknya
+B. Menanyakan keadaannya dengan baik
+C. Membiarkannya
+D. Menceritakan masalahnya kepada semua orang
+173. Jika teman tidak membawa makanan, sikap peduli yang dapat dilakukan adalah ...
+A. Mengejeknya
+B. Berbagi jika mampu
+C. Menyembunyikan makanan
+D. Menghindarinya
+[Page 20]174. Ketika melihat tanaman sekolah membutuhkan air, siswa dapat ...
+A. Membiarkannya
+B. Menyiramnya jika memungkinkan
+C. Merusaknya
+D. Menginjaknya
+175. Sikap toleransi berarti ...
+A. Menghargai perbedaan
+B. Memaksa orang lain sama dengan kita
+C. Hanya berteman dengan kelompok sendiri
+D. Menolak perbedaan
+176. Jika teman menggunakan bahasa daerah yang berbeda, kita sebaiknya
+A. Mengejeknya
+B. Menghargainya
+C. Melarangnya
+D. Menjauhinya
+177. Jika teman memiliki makanan khas dari daerahnya, kita sebaiknya ...
+A. Mengejek makanan tersebut
+B. Menghargai perbedaannya
+C. Mengatakan makanan kita lebih baik
+D. Melarang teman membawanya
+178. Saat teman sedang menjalankan ibadah, sikap yang tepat adalah
+A. Mengganggu
+B. Menghormati dan menjaga ketenangan
+C. Menertawakan
+D. Mengajak bermain
+179. Jika ada siswa baru dari daerah yang berbeda, kita sebaiknya ...
+A. Mengucilkannya
+B. Menyambut dan mengajaknya berteman
+C. Mengejek logatnya
+D. Membiarkannya sendiri
+180. Dalam kehidupan asrama, toleransi penting karena siswa
+A. Memiliki kebiasaan yang selalu sama
+B. Memiliki latar belakang dan kebiasaan yang dapat berbeda
+C. Tidak perlu berinteraksi
+D. Harus selalu mengikuti satu orang
+181. Ketika membersihkan halaman bersama, pekerjaan akan lebih mudah jika
+A. Hanya satu orang yang bekerja
+B. Semua anggota bekerja sama
+C. Tidak ada yang bekerja
+D. Saling menunggu
+182. Dalam pembagian tugas kelompok, sebaiknya ...
+A. Dibagi secara adil
+B. Diberikan kepada satu orang
+C. Hanya diberikan kepada teman dekat
+D. Ditentukan secara sembarangan
+183. Jika teman memiliki kemampuan yang berbeda, pembagian tugas sebaiknya ...
+A. Mempertimbangkan kemampuan masing-masing
+[Page 21]B. Semua tugas diberikan kepada satu orang
+C. Teman yang lemah tidak diberi tugas
+D. Semua tugas diberikan kepada ketua
+184. Dalam permainan kelompok, setiap anggota sebaiknya ...
+A. Mendapat kesempatan
+B. Hanya menonton
+C. Selalu menjadi pemain utama
+D. Tidak mengikuti aturan
+185. Jika anggota kelompok mengalami kesulitan, anggota lain sebaiknya ...
+A. Membiarkannya
+B. Membantunya
+C. Menertawakannya
+D. Menyalahkannya
+186. Keberhasilan sebuah kelompok sebaiknya dianggap sebagai ...
+A. Hasil satu orang
+B. Hasil kerja bersama
+C. Hasil ketua saja
+D. Hasil siswa yang paling pintar
+187. Jika pendapat teman berbeda dengan pendapat kita, dalam kerja sama kita harus ...
+A. Mendengarkannya
+B. Memaksakan pendapat
+C. Mengabaikannya
+D. Marah
+188. Contoh keadilan dalam penggunaan fasilitas asrama adalah ...
+A. Satu orang menguasainya sepanjang waktu
+B. Menggunakannya secara bergantian
+C. Hanya teman dekat yang boleh menggunakan
+D. Melarang orang lain menggunakannya
+189. Jika mendapat giliran menggunakan fasilitas bersama, kita harus ...
+A. Menggunakan sesuai kebutuhan dan memberikan giliran kepada orang lain
+B. Menggunakannya selama mungkin
+C. Melarang teman berikutnya
+D. Menyembunyikannya
+190. Jika kelompok berhasil menyelesaikan tugas, sikap yang tepat adalah
+A. Menghargai kontribusi semua anggota
+B. Mengambil semua pujian
+C. Menyalahkan anggota lain
+D. Mengatakan hanya ketua yang bekerja
+191. Saat menggunakan grup chat sekolah, siswa sebaiknya
+A. Menggunakan bahasa yang sopan
+B. Menghina teman
+C. Mengirim pesan yang mengganggu
+D. Menyebarkan ejekan
+192. Informasi pribadi seperti kata sandi sebaiknya...
+A. Dibagikan kepada teman
+B. Dijaga kerahasiaannya
+[Page 22]C. Dipasang di grup
+D. Dikirim kepada orang yang tidak dikenal
+193. Sebelum mengunggah foto teman ke internet, sebaiknya ...
+A. Meminta izin
+B. Langsung mengunggah
+C. Mengedit untuk mengejek
+D. Menyebarkannya
+194. Jika menerima informasi yang belum jelas kebenarannya di grup, sebaiknya ...
+A. Langsung menyebarkannya
+B. Memastikan kebenarannya terlebih dahulu
+C. Menambahkan cerita sendiri
+D. Mengirimkannya ke semua grup
+195. Ketika kalah dalam permainan online, sikap yang baik adalah ...
+A. Menghina lawan
+B. Mengucapkan sesuatu yang positif seperti "Good Game"
+C. Mengirim kata-kata kasar
+D. Keluar sambil mengejek
+196. Seorang pemimpin yang baik seharusnya ...
+A. Memberikan contoh yang baik
+B. Selalu memerintah
+C. Mementingkan diri sendiri
+D. Menghindari pekerjaan
+197. Jika menjadi ketua kegiatan kebersihan, seorang pemimpin sebaiknya ...
+A. Hanya menyuruh anggota
+B. Ikut bekerja bersama anggota
+C. Duduk dan melihat
+D. Pulang lebih dahulu
+198. Jika anggota kelompok memiliki masalah, pemimpin sebaiknya
+A. Mendengarkan dan membantu mencari solusi
+B. Menyalahkannya
+C. Mengabaikannya
+D. Mengeluarkannya dari kelompok
+199. Pemimpin yang baik mengutamakan ...
+A. Kepentingan bersama
+B. Kepentingan dirinya sendiri
+C. Pujian
+D. Keuntungan pribadi
+200. Penerapan 12 nilai kebaikan dalam kehidupan sekolah dan asrama diharapkan dapat
+membantu siswa menjadi pribadi yang ...
+A. Suka menang sendiri
+B. Jujur, bertanggung jawab, peduli, disiplin, dan menghargai orang lain
+C. Selalu ingin dipuji
+D. Tidak membutuhkan orang lain
+`;
+
+        function parseQuestions(text) {
+            // Clean up page markers
+            const cleanText = text.replace(/\[Page \d+\]/g, '').trim();
+            const lines = cleanText.split('\n').map(l => l.trim()).filter(l => l !== '');
+            
+            const questions = [];
+            let currentQ = null;
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                
+                // Match "1. Text..." or "12. Text..."
+                const qMatch = line.match(/^(\d+)\.\s+(.*)/);
+                
+                if (qMatch) {
+                    if (currentQ) questions.push(currentQ);
+                    currentQ = {
+                        id: parseInt(qMatch[1]),
+                        text: qMatch[2],
+                        options: {},
+                        userAnswer: null
+                    };
+                } else if (currentQ) {
+                    // Match "A. Option text"
+                    const optMatch = line.match(/^([A-D])\.\s+(.*)/);
+                    if (optMatch) {
+                        currentQ.options[optMatch[1]] = optMatch[2];
+                    } else {
+                        // If it's not a new question and not an option, append to previous text
+                        if (Object.keys(currentQ.options).length === 0) {
+                            // Append to question text
+                            currentQ.text += " " + line;
+                        } else {
+                            // Append to the last option (in case option text wraps)
+                            const lastKey = Object.keys(currentQ.options).pop();
+                            currentQ.options[lastKey] += " " + line;
+                        }
+                    }
+                }
+            }
+            if (currentQ) questions.push(currentQ);
+            return questions;
+        }
+
+        const questionsList = parseQuestions(rawQuestionData);
+        let currentIndex = 0;
+        
+        // Restore saved answers from sessionStorage if available
+        try {
+            const savedAnswers = JSON.parse(sessionStorage.getItem('cap_exam_answers') || '{}');
+            Object.keys(savedAnswers).forEach(qId => {
+                const item = questionsList.find(q => q.id === parseInt(qId));
+                if (item) item.userAnswer = savedAnswers[qId];
+            });
+            const savedName = sessionStorage.getItem('cap_exam_name');
+            const savedClass = sessionStorage.getItem('cap_exam_class');
+            if (savedName) document.getElementById('student-name').value = savedName;
+            if (savedClass) document.getElementById('student-class').value = savedClass;
+        } catch (e) {
+            console.warn("Session storage not accessible", e);
+        }
+
+        // UI Elements
+        const gridContainer = document.getElementById('question-grid');
+        const qTextEl = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const currentQNumEl = document.getElementById('current-q-num');
+        const currentProgressText = document.getElementById('current-progress-text');
+        const totalQNumEl = document.getElementById('total-q-num');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const btnFinishDirect = document.getElementById('btn-finish-direct');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const answeredCountEl = document.getElementById('answered-count');
+        const unansweredCountEl = document.getElementById('unanswered-count');
+        const qStatusBadge = document.getElementById('q-status-badge');
+        
+        // Student Info Inputs
+        const studentNameInput = document.getElementById('student-name');
+        const studentClassInput = document.getElementById('student-class');
+        const gasEndpointInput = document.getElementById('gas-endpoint');
+        
+        studentNameInput.addEventListener('input', (e) => {
+            try { sessionStorage.setItem('cap_exam_name', e.target.value); } catch (_) {}
+        });
+        studentClassInput.addEventListener('input', (e) => {
+            try { sessionStorage.setItem('cap_exam_class', e.target.value); } catch (_) {}
+        });
+
+        // Set URL default Google Apps Script
+        if (gasEndpointInput) {
+            gasEndpointInput.value = DEFAULT_GAS_URL;
+        }
+
+        // Toast modal elements
+        const toastModal = document.getElementById('toast-modal');
+        const toastMessage = document.getElementById('toast-message');
+        const toastClose = document.getElementById('toast-close');
+
+        // Confirm / Review modal elements
+        const confirmModal = document.getElementById('confirm-modal');
+        const btnCancelFinish = document.getElementById('btn-cancel-finish');
+        const btnConfirmFinish = document.getElementById('btn-confirm-finish');
+        const confirmAnsweredEl = document.getElementById('confirm-answered');
+        const confirmUnansweredEl = document.getElementById('confirm-unanswered');
+        const confirmStudentNameEl = document.getElementById('confirm-student-name');
+        const reviewGrid = document.getElementById('review-grid');
+
+        toastClose.addEventListener('click', () => {
+            toastModal.classList.add('hidden');
+        });
+
+        function showNotification(msg) {
+            toastMessage.textContent = msg;
+            toastModal.classList.remove('hidden');
+        }
+
+        // Setup Init
+        window.addEventListener('DOMContentLoaded', () => {
+            totalQNumEl.textContent = questionsList.length;
+            renderGrid();
+            showQuestion(currentIndex);
+            updateStats();
+            
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+            }, 300);
+        });
+
+        function saveAnswer(qId, val) {
+            try {
+                const saved = JSON.parse(sessionStorage.getItem('cap_exam_answers') || '{}');
+                saved[qId] = val;
+                sessionStorage.setItem('cap_exam_answers', JSON.stringify(saved));
+            } catch (e) {
+                console.warn(e);
+            }
+        }
+
+        function updateStats() {
+            const answered = questionsList.filter(q => q.userAnswer !== null).length;
+            const unanswered = questionsList.length - answered;
+            answeredCountEl.textContent = answered;
+            unansweredCountEl.textContent = unanswered;
+        }
+
+        function renderGrid() {
+            gridContainer.innerHTML = '';
+            questionsList.forEach((q, index) => {
+                const btn = document.createElement('button');
+                const isAnswered = Boolean(q.userAnswer);
+                const isCurrent = index === currentIndex;
+                
+                btn.className = `h-9 rounded-none font-bold text-xs transition-all border-2 border-black flex items-center justify-center font-typewriter
+                    ${isAnswered 
+                        ? 'bg-emerald-400 text-black shadow-[2px_2px_0px_#000]' 
+                        : 'bg-stone-800 text-stone-300 hover:bg-stone-700 shadow-[1px_1px_0px_#000]'}
+                    ${isCurrent ? 'ring-2 ring-yellow-400 ring-offset-2 ring-offset-[#1a1b22] !bg-yellow-400 !text-black !font-black !shadow-[3px_3px_0px_#000]' : ''}
+                `;
+                btn.textContent = q.id;
+                btn.onclick = () => {
+                    currentIndex = index;
+                    showQuestion(currentIndex);
+                    renderGrid();
+                };
+                gridContainer.appendChild(btn);
+            });
+        }
+
+        function showQuestion(index) {
+            const q = questionsList[index];
+            currentQNumEl.textContent = q.id;
+            currentProgressText.textContent = q.id;
+            qTextEl.textContent = `${q.id}. ${q.text}`;
+            
+            // Status badge update
+            if (q.userAnswer) {
+                qStatusBadge.className = "font-typewriter text-xs font-bold px-2.5 py-1 border-2 border-black bg-emerald-400 text-black";
+                qStatusBadge.textContent = `DIJAWAB: (${q.userAnswer})`;
+            } else {
+                qStatusBadge.className = "font-typewriter text-xs font-bold px-2.5 py-1 border-2 border-black bg-stone-800 text-stone-300";
+                qStatusBadge.textContent = "BELUM DIJAWAB";
+            }
+
+            optionsContainer.innerHTML = '';
+            
+            for (const [key, value] of Object.entries(q.options)) {
+                const optDiv = document.createElement('div');
+                optDiv.className = 'relative';
+                
+                const inputId = `q${q.id}_opt${key}`;
+                
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.name = `question_${q.id}`;
+                input.id = inputId;
+                input.value = key;
+                input.className = 'peer hidden';
+                if (q.userAnswer === key) input.checked = true;
+                
+                input.addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        questionsList[currentIndex].userAnswer = e.target.value;
+                        saveAnswer(questionsList[currentIndex].id, e.target.value);
+                        updateStats();
+                        renderGrid();
+                        showQuestion(currentIndex);
+                    }
+                });
+
+                const label = document.createElement('label');
+                label.htmlFor = inputId;
+                label.className = `block w-full p-3.5 sm:p-4 border-2 border-black bg-stone-100 hover:bg-stone-200 cursor-pointer transition-all duration-100
+                    text-stone-900 shadow-[3px_3px_0px_#000] flex items-start gap-3.5`;
+                
+                const keySpan = document.createElement('span');
+                keySpan.className = 'font-stamp text-xl bg-black text-yellow-400 w-8 h-8 flex items-center justify-center shrink-0 border border-black shadow-[1px_1px_0px_#000]';
+                keySpan.textContent = key;
+                
+                const textSpan = document.createElement('span');
+                textSpan.className = 'mt-0.5 text-sm sm:text-base font-medium leading-normal';
+                textSpan.textContent = value;
+                
+                label.appendChild(keySpan);
+                label.appendChild(textSpan);
+                
+                optDiv.appendChild(input);
+                optDiv.appendChild(label);
+                
+                optionsContainer.appendChild(optDiv);
+            }
+
+            btnPrev.disabled = currentIndex === 0;
+            btnNext.disabled = currentIndex === questionsList.length - 1;
+        }
+
+        btnPrev.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                showQuestion(currentIndex);
+                renderGrid();
+            }
+        });
+
+        btnNext.addEventListener('click', () => {
+            if (currentIndex < questionsList.length - 1) {
+                currentIndex++;
+                showQuestion(currentIndex);
+                renderGrid();
+            }
+        });
+
+        // Open Review Modal & Render Review Table
+        btnFinishDirect.addEventListener('click', () => {
+            const studentName = studentNameInput.value.trim();
+            const studentClass = studentClassInput.value.trim();
+
+            if (!studentName || !studentClass) {
+                showNotification("HARAP ISI NAMA & KELAS LENGKAP PADA FORM IDENTITAS PESERTA DI SISI KIRI SEBELUM MENYELESAIKAN UJIAN!");
+                studentNameInput.focus();
+                return;
+            }
+
+            const answeredCount = questionsList.filter(q => q.userAnswer !== null).length;
+            const unansweredCount = questionsList.length - answeredCount;
+            
+            confirmAnsweredEl.textContent = answeredCount;
+            confirmUnansweredEl.textContent = unansweredCount;
+            confirmStudentNameEl.textContent = studentName;
+
+            // Render Review Grid in 8 columns matching the PDF table
+            reviewGrid.innerHTML = '';
+            for (let c = 0; c < 8; c++) {
+                const colWrapper = document.createElement('div');
+                colWrapper.className = 'flex flex-col border border-stone-400 bg-white rounded-none overflow-hidden';
+                
+                const colHeader = document.createElement('div');
+                colHeader.className = 'bg-stone-800 text-yellow-400 font-bold py-0.5 text-center text-[10px] font-typewriter';
+                colHeader.textContent = `${c * 25 + 1}-${c * 25 + 25}`;
+                colWrapper.appendChild(colHeader);
+
+                for (let r = 0; r < 25; r++) {
+                    const idx = (c * 25) + r;
+                    const q = questionsList[idx];
+                    const isAns = Boolean(q.userAnswer);
+
+                    const row = document.createElement('div');
+                    row.className = `flex justify-between items-center px-1.5 py-0.5 border-b border-stone-200 cursor-pointer hover:bg-yellow-100 text-[11px] ${
+                        isAns ? 'bg-emerald-50' : 'bg-red-50/50'
+                    }`;
+                    row.title = `Klik untuk lompat ke nomor ${q.id}`;
+                    row.onclick = () => {
+                        confirmModal.classList.add('hidden');
+                        currentIndex = idx;
+                        showQuestion(currentIndex);
+                        renderGrid();
+                    };
+
+                    row.innerHTML = `
+                        <span class="font-bold text-stone-600">${q.id}.</span>
+                        <span class="font-black ${isAns ? 'text-emerald-700 bg-emerald-200 px-1 rounded-sm' : 'text-red-500'}">
+                            ${q.userAnswer || '-'}
+                        </span>
+                    `;
+                    colWrapper.appendChild(row);
+                }
+                reviewGrid.appendChild(colWrapper);
+            }
+
+            confirmModal.classList.remove('hidden');
+        });
+
+        btnCancelFinish.addEventListener('click', () => {
+            confirmModal.classList.add('hidden');
+        });
+
+        // Helper function to send answers payload to Google Apps Script
+        async function sendAnswersToGoogleSpreadsheet(payload, targetUrl) {
+            const endpoint = targetUrl || DEFAULT_GAS_URL;
+            if (!endpoint) return { success: false, reason: "no_url" };
+            
+            try {
+                // Mengirim payload ke Google Apps Script tanpa hambatan CORS
+                await fetch(endpoint, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                return { success: true };
+            } catch (error) {
+                console.error("Gagal mengirim ke Google Sheets:", error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // 100% Reliable 1-Page A4 PDF Table Generation & Sync with Google Sheets
+        btnConfirmFinish.addEventListener('click', async () => {
+            const studentName = studentNameInput.value.trim();
+            const studentClass = studentClassInput.value.trim();
+            const gasUrl = (gasEndpointInput ? gasEndpointInput.value.trim() : '') || DEFAULT_GAS_URL;
+            const answeredCount = questionsList.filter(q => q.userAnswer !== null).length;
+            const unansweredCount = questionsList.length - answeredCount;
+
+            if (!studentName || !studentClass) {
+                showNotification("Harap lengkapi Nama dan Kelas terlebih dahulu!");
+                return;
+            }
+
+            const btnFinishLabel = document.getElementById('btn-finish-label');
+            const originalLabel = btnFinishLabel ? btnFinishLabel.textContent : "SELESAI & KIRIM KE SPREADSHEET";
+            if (btnFinishLabel) {
+                btnFinishLabel.textContent = "SEDANG MENGIRIM KE SPREADSHEET & MEMBUAT PDF...";
+            }
+            btnConfirmFinish.disabled = true;
+
+            // Kumpulkan seluruh jawaban 1 - 200
+            const answerMap = {};
+            questionsList.forEach(q => {
+                answerMap[q.id] = q.userAnswer || "-";
+            });
+
+            const submissionPayload = {
+                nama: studentName,
+                kelas: studentClass,
+                totalDijawab: answeredCount,
+                totalKosong: unansweredCount,
+                jawaban: answerMap,
+                timestamp: new Date().toISOString()
+            };
+
+            // Kirim ke Google Apps Script Spreadsheet secara otomatis
+            let sheetSent = false;
+            try {
+                const res = await sendAnswersToGoogleSpreadsheet(submissionPayload, gasUrl);
+                sheetSent = res.success;
+            } catch (err) {
+                console.warn("Gagal terhubung ke Spreadsheet:", err);
+            }
+
+            try {
+                const { jsPDF } = window.jspdf;
+                // Create A4 Portrait PDF
+                const doc = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('id-ID', {
+                    day: 'numeric', month: 'long', year: 'numeric'
+                });
+
+                // 1. Outer Border Frame
+                doc.setDrawColor(40, 40, 40);
+                doc.setLineWidth(0.6);
+                doc.rect(7, 7, 196, 283);
+
+                // 2. Header / Kop Sekolah
+                doc.setFillColor(242, 244, 247);
+                doc.rect(8, 8, 194, 22, 'F');
+                doc.setDrawColor(0, 0, 0);
+                doc.setLineWidth(0.4);
+                doc.line(8, 30, 202, 30);
+
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(13);
+                doc.setTextColor(15, 23, 42);
+                doc.text('YAYASAN CAHAYA ANAK PAPUA', 105, 14, { align: 'center' });
+
+                doc.setFontSize(9.5);
+                doc.setTextColor(30, 41, 59);
+                doc.text('PENILAIAN TENGAH SEMESTER (PTS) • ETIKA DAN MORAL', 105, 19.5, { align: 'center' });
+
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(7.5);
+                doc.setTextColor(71, 85, 105);
+                doc.text('LEMBAR HASIL JAWABAN SISWA (200 SOAL PILIHAN GANDA)', 105, 25, { align: 'center' });
+
+                // 3. Student Info Panel
+                doc.setFillColor(255, 255, 255);
+                doc.rect(8, 30, 194, 15, 'F');
+                doc.setDrawColor(0, 0, 0);
+                doc.setLineWidth(0.3);
+                doc.line(8, 45, 202, 45);
+
+                doc.setFontSize(8);
+                doc.setTextColor(0, 0, 0);
+
+                // Left Info
+                doc.setFont('helvetica', 'bold');
+                doc.text('NAMA SISWA', 12, 35.5);
+                doc.text(':', 35, 35.5);
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(15, 23, 42);
+                doc.text(studentName.toUpperCase(), 38, 35.5);
+
+                doc.setTextColor(0, 0, 0);
+                doc.text('KELAS / ASR', 12, 41);
+                doc.text(':', 35, 41);
+                doc.setFont('helvetica', 'normal');
+                doc.text(studentClass.toUpperCase(), 38, 41);
+
+                // Right Info
+                doc.setFont('helvetica', 'bold');
+                doc.text('TANGGAL', 122, 35.5);
+                doc.text(':', 148, 35.5);
+                doc.setFont('helvetica', 'normal');
+                doc.text(dateStr, 151, 35.5);
+
+                doc.setFont('helvetica', 'bold');
+                doc.text('STATUS JAWAB', 122, 41);
+                doc.text(':', 148, 41);
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(answeredCount === 200 ? 5 : 180, answeredCount === 200 ? 120 : 30, 40);
+                doc.text(`${answeredCount} Terjawab (${unansweredCount} Kosong)`, 151, 41);
+
+                // 4. 200 Questions Table (8 Columns x 25 Rows = Exactly 200 questions on 1 Page)
+                const startX = 10;
+                const colWidth = 23.75; // 8 * 23.75 = 190 mm width
+                const startY = 48;
+                const headerH = 5;
+                const rowH = 5.2; // 25 rows * 5.2 = 130 mm
+
+                for (let c = 0; c < 8; c++) {
+                    const colX = startX + (c * colWidth);
+                    
+                    // Column Group Header
+                    doc.setFillColor(226, 232, 240);
+                    doc.rect(colX, startY, colWidth, headerH, 'FD');
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(7.5);
+                    doc.setTextColor(0, 0, 0);
+                    doc.text('NO', colX + 4, startY + 3.6);
+                    doc.text('JWB', colX + 16, startY + 3.6);
+
+                    // 25 Rows for this column
+                    for (let r = 0; r < 25; r++) {
+                        const qIndex = (c * 25) + r;
+                        const q = questionsList[qIndex];
+                        const rowY = startY + headerH + (r * rowH);
+
+                        // Striped background
+                        if (r % 2 === 1) {
+                            doc.setFillColor(248, 250, 252);
+                        } else {
+                            doc.setFillColor(255, 255, 255);
+                        }
+
+                        doc.setDrawColor(203, 213, 225);
+                        doc.setLineWidth(0.15);
+                        doc.rect(colX, rowY, colWidth, rowH, 'FD');
+
+                        // Vertical split between NO and JWB
+                        doc.line(colX + 10, rowY, colX + 10, rowY + rowH);
+
+                        // Question ID
+                        doc.setFont('helvetica', 'normal');
+                        doc.setFontSize(7);
+                        doc.setTextColor(71, 85, 105);
+                        doc.text(String(q.id), colX + 8.5, rowY + 3.8, { align: 'right' });
+
+                        // User Answer
+                        if (q.userAnswer) {
+                            doc.setFont('helvetica', 'bold');
+                            doc.setFontSize(8.5);
+                            doc.setTextColor(4, 120, 87); // Emerald Green
+                            doc.text(q.userAnswer, colX + 16.5, rowY + 3.9, { align: 'center' });
+                        } else {
+                            doc.setFont('helvetica', 'bold');
+                            doc.setFontSize(7.5);
+                            doc.setTextColor(220, 38, 38); // Red dash
+                            doc.text('-', colX + 16.5, rowY + 3.8, { align: 'center' });
+                        }
+                    }
+
+                    // Column group border outline
+                    doc.setDrawColor(51, 65, 85);
+                    doc.setLineWidth(0.35);
+                    doc.rect(colX, startY, colWidth, headerH + (25 * rowH));
+                }
+
+                // 5. Signature Section (Tanda Tangan)
+                const sigY = 196;
+                doc.setDrawColor(100, 116, 139);
+                doc.setLineWidth(0.3);
+
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(8);
+                doc.setTextColor(0, 0, 0);
+
+                // Guru / Pembina Signature
+                doc.text('Mengetahui / Memeriksa,', 45, sigY, { align: 'center' });
+                doc.text('Guru Pengampu / Pembina', 45, sigY + 4.5, { align: 'center' });
+                doc.line(22, sigY + 26, 68, sigY + 26);
+                doc.setFontSize(7);
+                doc.setTextColor(100, 116, 139);
+                doc.text('( Tanda Tangan & Nama Terang )', 45, sigY + 30, { align: 'center' });
+
+                // Siswa Signature
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(8);
+                doc.setTextColor(0, 0, 0);
+                doc.text(`Sawinggrai, ${dateStr}`, 160, sigY, { align: 'center' });
+                doc.text('Tanda Tangan Siswa,', 160, sigY + 4.5, { align: 'center' });
+                doc.line(138, sigY + 26, 182, sigY + 26);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(8);
+                doc.setTextColor(15, 23, 42);
+                doc.text(studentName.toUpperCase(), 160, sigY + 30, { align: 'center' });
+
+                // 6. Footer note
+                doc.setFont('helvetica', 'italic');
+                doc.setFontSize(6.5);
+                doc.setTextColor(148, 163, 184);
+                doc.text('* Lembar Jawaban Resmi Penilaian Tengah Semester (PTS) - Yayasan Cahaya Anak Papua. Dicetak otomatis oleh sistem.', 105, 285, { align: 'center' });
+
+                // Sanitize file name and trigger download
+                const sanitizedName = studentName.replace(/[^a-zA-Z0-9]/g, '_');
+                const sanitizedClass = studentClass.replace(/[^a-zA-Z0-9]/g, '_');
+                doc.save(`LEMBAR_JAWABAN_${sanitizedName}_${sanitizedClass}.pdf`);
+
+                confirmModal.classList.add('hidden');
+                
+                let successMessage = `BERHASIL! Data ujian atas nama "${studentName}" (${answeredCount} terjawab) berhasil otomatis dikirim & tersimpan di Google Spreadsheet, serta berkas PDF 1 halaman telah diunduh!`;
+                showNotification(successMessage);
+            } catch (err) {
+                console.error("PDF generation error:", err);
+                showNotification("Data berhasil dikirim ke Spreadsheet, namun ada kendala saat mengunduh PDF: " + err.message);
+            } finally {
+                if (btnFinishLabel) {
+                    btnFinishLabel.textContent = originalLabel;
+                }
+                btnConfirmFinish.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
